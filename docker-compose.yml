@@ -1,0 +1,51 @@
+version: '3.7'
+
+
+services:
+
+  # for front-end
+  react_client:
+    container_name: react_client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - './client:/app'
+      - '/app/node_modules'
+    ports:
+      - 3001:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+  # for backend
+  dotNet_backend:
+    container_name: webAPI
+    #image: webapi:dev
+    ports:
+      - 49153:49153
+      - 49154:49154
+    build:
+      context: ./WebAPI
+      dockerfile: Dockerfile
+    volumes:
+      - './WebAPI:/app'
+  # for database
+  mysql_db:
+    container_name: db
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    volumes:
+      - './mysql:/mysql'
+
+    
+
+
