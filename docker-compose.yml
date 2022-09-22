@@ -3,33 +3,40 @@ version: '3.7'
 
 services:
 
-  # for front-end
+  # front-end
   react_client:
     container_name: react_client
     build:
       context: ./client
       dockerfile: Dockerfile
     volumes:
-      - './client:/app'
-      - '/app/node_modules'
+      - ./client:/app
+      - /app/node_mo0dules
     ports:
       - 3001:3000
     environment:
       - CHOKIDAR_USEPOLLING=true
     stdin_open: true
-  # for backend
+  # backend
   dotNet_backend:
     container_name: webAPI
-    #image: webapi:dev
-    ports:
-      - 49153:49153
-      - 49154:49154
     build:
-      context: ./WebAPI
+      context: ./webapi
       dockerfile: Dockerfile
+    image: lure110/webapi:latest
+    ports:
+      - 49153:80
+      - 49154:443
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: 49154
+      ASPNETCORE_ENVIRONMENT: Development
     volumes:
-      - './WebAPI:/app'
-  # for database
+      - ${APPDATA}\microsoft\UserSecrets\:/root/.microsoft/usersecrets
+      - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https/
+    depends_on:
+      - mysql_db
+  # database
   mysql_db:
     container_name: db
     image: mysql:latest
@@ -44,7 +51,20 @@ services:
     expose:
       - 3306
     volumes:
-      - './mysql:/mysql'
+      - ./mysql:/var/lib/mysql
+  # db web interface
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql_db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
 
     
 

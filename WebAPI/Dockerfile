@@ -1,22 +1,19 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Get base SDK Image
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+# Copy the CSPROJ file and restore any dependecies( using NUGET)
+COPY *.csproj ./
+RUN dotnet restore
+
+# Copy the project files and build our release
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Generate runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["WebAPI.csproj", "."]
-RUN dotnet restore "./WebAPI.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "WebAPI.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "WebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebAPI.dll"]
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "webAPI.dll"]
