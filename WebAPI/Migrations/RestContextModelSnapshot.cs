@@ -22,6 +22,43 @@ namespace webAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("webAPI.Data.Entities.Building", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("LandplotId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Occupancy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RegionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LandplotId");
+
+                    b.HasIndex("RegionId");
+
+                    b.ToTable("Buildings");
+                });
+
             modelBuilder.Entity("webAPI.Data.Entities.Landplot", b =>
                 {
                     b.Property<int>("Id")
@@ -73,6 +110,25 @@ namespace webAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Regions");
+                });
+
+            modelBuilder.Entity("webAPI.Data.Entities.Building", b =>
+                {
+                    b.HasOne("webAPI.Data.Entities.Landplot", "Landplot")
+                        .WithMany()
+                        .HasForeignKey("LandplotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webAPI.Data.Entities.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Landplot");
+
+                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("webAPI.Data.Entities.Landplot", b =>
