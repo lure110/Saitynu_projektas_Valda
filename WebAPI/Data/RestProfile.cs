@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using webAPI.Data.Dtos.Buildings;
 using webAPI.Data.Dtos.Landplots;
 using webAPI.Data.Dtos.Regions;
 using webAPI.Data.Entities;
@@ -16,6 +17,10 @@ namespace webAPI.Data
             CreateMap<Landplot, LandplotDto>();
             CreateMap<CreateLandplotDto, Landplot>();
             CreateMap<UpdateLandplotDto, Landplot>();
+
+            CreateMap<Building, BuildingDto>();
+            CreateMap<CreateBuildingDto, Building>();
+            CreateMap<UpdateBuildingDto, Building>();
         }
     }
 }

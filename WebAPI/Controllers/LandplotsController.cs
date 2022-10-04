@@ -37,9 +37,9 @@ namespace webAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<LandplotDto>> GetAll(int landplotId)
+        public async Task<IEnumerable<LandplotDto>> GetAll(int regionId)
         {
-            var landplots = await _landplotsRepository.GetAll(landplotId);
+            var landplots = await _landplotsRepository.GetAll(regionId);
             return landplots.Select(o => _mapper.Map<LandplotDto>(o));
         }
 

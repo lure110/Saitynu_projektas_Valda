@@ -23,7 +23,9 @@ namespace webAPI.Data.Repositories
 
         public async Task<Landplot> Get(int regionId, int landplotId)
         {
-            return await _restContext.Landplots.FirstOrDefaultAsync(o => o.RegionId == regionId && o.Id == landplotId);
+            var landplot = await _restContext.Landplots.FirstOrDefaultAsync(o => o.RegionId == regionId && o.Id == landplotId);
+            if (landplot == null) return null;
+            return landplot;
         }
         public async Task<List<Landplot>> GetAll(int regionId)
         {

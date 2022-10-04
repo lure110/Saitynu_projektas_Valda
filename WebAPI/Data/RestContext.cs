@@ -8,6 +8,7 @@ namespace webAPI.Data
         public DbSet<Region> Regions { get; set; }
         public DbSet<Landplot> Landplots { get; set; }
 
+        public DbSet<Building> Buildings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using webAPI.Data.Entities;
 
 namespace webAPI.Data.Repositories
@@ -23,31 +24,13 @@ namespace webAPI.Data.Repositories
 
         public async Task<IEnumerable<Region>> GetAll()
         {
-            return new List<Region>
-            {
-                new Region()
-                {
-                    Name = "name",
-                    Description = "description",
-                    CreationTimeUtc = DateTime.Now
-                },
-                new Region()
-                {
-                    Name = "name1",
-                    Description = "description",
-                    CreationTimeUtc = DateTime.Now
-                }
-            };
+            return await _restContext.Regions.ToListAsync();
         }
         public async Task<Region> Get(int id)
         {
-            return
-                new Region()
-                {
-                    Name = "name1",
-                    Description = "description",
-                    CreationTimeUtc = DateTime.Now
-                };
+            var region = await _restContext.Regions.FirstOrDefaultAsync(o => o.Id == id);
+            if (region == null) return null;
+            return region;
         }
         public async Task<Region> Create(Region region)
         {
@@ -57,16 +40,17 @@ namespace webAPI.Data.Repositories
         }
         public async Task<Region> Put(Region region)
         {
-            return
-                new Region()
-                {
-                    Name = "name1",
-                    Description = "description",
-                    CreationTimeUtc = DateTime.Now
-                };
+            _restContext.Regions.Update(region);
+
+            await _restContext.SaveChangesAsync();
+
+            return region;
         }
         public async Task Delete(Region region)
         {
+            _restContext.Regions.Remove(region);
+
+            await _restContext.SaveChangesAsync();
         }
     }
 }

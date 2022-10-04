@@ -11,7 +11,7 @@ builder.Services.AddDbContext<RestContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<IRegionsRepository, RegionsRepository>();
 builder.Services.AddTransient<ILandplotsRepository, LandplotsRepository>();
-
+builder.Services.AddTransient<IBuildingsRepository, BuildingsRepository>();
 
 builder.Services.AddSwaggerGen();
 
