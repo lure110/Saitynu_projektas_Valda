@@ -65,7 +65,7 @@ namespace webAPI.Controllers
             if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
 
             var building = _mapper.Map<Building>(buildingDto);
-            building.RegionId = regionId;
+            building.Landplot.Region.Id = regionId;
             // needs to work on
 
             await _buildingsRepository.Insert(building);

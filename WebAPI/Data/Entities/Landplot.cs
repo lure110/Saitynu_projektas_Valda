@@ -9,7 +9,6 @@ namespace webAPI.Data.Entities
         public string Owner { get; set; }
         public DateTime CreationDateUtc { get; set; }
 
-        public int RegionId { get; set; }
         public Region Region {get; set; }
     }
 }

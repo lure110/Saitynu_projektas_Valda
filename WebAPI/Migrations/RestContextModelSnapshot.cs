@@ -40,9 +40,6 @@ namespace webAPI.Migrations
                     b.Property<int?>("Occupancy")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegionId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Size")
                         .HasColumnType("int");
 
@@ -53,8 +50,6 @@ namespace webAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("LandplotId");
-
-                    b.HasIndex("RegionId");
 
                     b.ToTable("Buildings");
                 });
@@ -120,15 +115,7 @@ namespace webAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("webAPI.Data.Entities.Region", "Region")
-                        .WithMany()
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Landplot");
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("webAPI.Data.Entities.Landplot", b =>

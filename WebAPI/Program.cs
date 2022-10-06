@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
+using System.Diagnostics;
 using webAPI.Data;
 using webAPI.Data.Repositories;
 
@@ -7,7 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddDbContext<RestContext>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddTransient<IRegionsRepository, RegionsRepository>();
 builder.Services.AddTransient<ILandplotsRepository, LandplotsRepository>();

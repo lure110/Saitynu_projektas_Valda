@@ -20,16 +20,18 @@ services:
   # backend
   dotNet_backend:
     container_name: webAPI
+    links:
+      - mysql_db
     build:
       context: ./webapi
       dockerfile: Dockerfile
     image: lure110/webapi:latest
     ports:
       - 5031:80
-      - 44824:443
+      - 7194:443
     environment:
       ASPNETCORE_URLS: "https://+;http://+"
-      ASPNETCORE_HTTPS_PORT: 49154
+      ASPNETCORE_HTTPS_PORT: 7194
       ASPNETCORE_ENVIRONMENT: Development
     volumes:
       - ${APPDATA}\microsoft\UserSecrets\:/root/.microsoft/usersecrets
