@@ -42,15 +42,15 @@ namespace webAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<LandplotDto>> GetAll(int regionId, int landplotId)
+        public async Task<IEnumerable<BuildingDto>> GetAll(int regionId, int landplotId)
         {
-            var landplots = await _buildingsRepository.GetAll(regionId, landplotId);
-            return landplots.Select(o => _mapper.Map<LandplotDto>(o));
+            var buildings = await _buildingsRepository.GetAll(regionId, landplotId);
+            return buildings.Select(o => _mapper.Map<BuildingDto>(o));
         }
 
 
         [HttpGet("{buildingId}")]
-        public async Task<ActionResult<LandplotDto>> Get(int regionId, int landplotId, int buildingId)
+        public async Task<ActionResult<BuildingDto>> Get(int regionId, int landplotId, int buildingId)
         {
             var building = await _buildingsRepository.Get(regionId, landplotId, buildingId);
             if (building == null) return NotFound($"Couldn't find a building with id of '{buildingId}'");
