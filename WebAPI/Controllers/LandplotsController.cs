@@ -59,6 +59,8 @@ namespace webAPI.Controllers
             if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
 
             var landplot = _mapper.Map<Landplot>(landplotDto);
+
+            landplot.Region = region;
             landplot.Region.Id = regionId;
 
             await _landplotsRepository.Insert(landplot);

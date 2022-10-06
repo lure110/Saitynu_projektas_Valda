@@ -16,6 +16,7 @@ namespace webAPI.Controllers
         /api/regions/{id} DELETE 200/204 <- Sunaikinti viena
 
         {
+            "country" : "country name",
 	        "region_name" : "some name",
 	        "description" : "desc"
         }
