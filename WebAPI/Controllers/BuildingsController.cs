@@ -53,7 +53,7 @@ namespace webAPI.Controllers
         public async Task<ActionResult<LandplotDto>> Get(int regionId, int landplotId, int buildingId)
         {
             var building = await _buildingsRepository.Get(regionId, landplotId, buildingId);
-            if (building == null) return NotFound();
+            if (building == null) return NotFound($"Couldn't find a building with id of '{buildingId}'");
 
             return Ok(_mapper.Map<BuildingDto>(building));
         }
@@ -64,9 +64,14 @@ namespace webAPI.Controllers
             var region = await _regionsRepository.Get(regionId);
             if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
 
+            var landplot = await _landplotsRepository.Get(regionId, landplotId);
+            if (region == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+
             var building = _mapper.Map<Building>(buildingDto);
-            building.Landplot.Region.Id = regionId;
-            // needs to work on
+
+            building.Landplot = landplot;
+            building.Landplot.Region = region;
+            
 
             await _buildingsRepository.Insert(building);
 

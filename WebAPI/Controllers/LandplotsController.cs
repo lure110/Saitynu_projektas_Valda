@@ -47,7 +47,7 @@ namespace webAPI.Controllers
         public async Task<ActionResult<LandplotDto>> Get(int regionId, int landplotId)
         {
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (landplot == null) return NotFound();
+            if (landplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}' ");
             
             return Ok(_mapper.Map<LandplotDto>(landplot));
         }
