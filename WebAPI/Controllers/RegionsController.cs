@@ -4,6 +4,8 @@ using webAPI.Data.Repositories;
 using webAPI.Data.Entities;
 using AutoMapper;
 using webAPI.Data.Dtos.Regions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace webAPI.Controllers
 {
@@ -35,21 +37,24 @@ namespace webAPI.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IEnumerable<RegionDto>> GetAll()
         {
             return (await _regionsRepository.GetAll()).Select(o => _mapper.Map<RegionDto>(o));
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Region>> Get(int id)
         {
             var region = await _regionsRepository.Get(id);
-            if (region == null) return NotFound($"Region with id '{id}' not found.");
+            if (region == null) return NotFound();
 
             return Ok(_mapper.Map<RegionDto>(region));
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<RegionDto>> Post(CreateRegionDto regionDto)
         {
             var region = _mapper.Map<Region>(regionDto);
@@ -59,11 +64,12 @@ namespace webAPI.Controllers
             return Created($"/api/regions/{region.Id}", _mapper.Map<RegionDto>(region));
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Manager, Administrator")]
         public async Task<ActionResult<RegionDto>> Put(int id, UpdateRegionDto regionDto)
         {
             var region = await _regionsRepository.Get(id);
-            if (region == null) return NotFound($"Region with id '{id}' not found.");
+            if (region == null) return NotFound();
 
             //region.Description = regionDto.Description;
             _mapper.Map(regionDto, region);
@@ -76,10 +82,11 @@ namespace webAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<RegionDto>> Delete(int id)
         {
             var region = await _regionsRepository.Get(id);
-            if (region == null) return NotFound($"Region with id '{id}' not found.");
+            if (region == null) return NotFound();
 
             await _regionsRepository.Delete(region);
 

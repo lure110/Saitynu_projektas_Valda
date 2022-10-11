@@ -2,6 +2,7 @@
 using webAPI.Data.Dtos.Buildings;
 using webAPI.Data.Dtos.Landplots;
 using webAPI.Data.Dtos.Regions;
+using webAPI.Data.Dtos.Users;
 using webAPI.Data.Entities;
 
 namespace webAPI.Data
@@ -21,6 +22,9 @@ namespace webAPI.Data
             CreateMap<Building, BuildingDto>();
             CreateMap<CreateBuildingDto, Building>();
             CreateMap<UpdateBuildingDto, Building>();
+
+            CreateMap<User, UserDto>();
+
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using webAPI.Data.Dtos.Landplots;
@@ -37,6 +39,7 @@ namespace webAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IEnumerable<LandplotDto>> GetAll(int regionId)
         {
             var landplots = await _landplotsRepository.GetAll(regionId);
@@ -44,19 +47,21 @@ namespace webAPI.Controllers
         }
 
         [HttpGet("{landplotId}")]
+        [AllowAnonymous]
         public async Task<ActionResult<LandplotDto>> Get(int regionId, int landplotId)
         {
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (landplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}' ");
+            if (landplot == null) return NotFound();
             
             return Ok(_mapper.Map<LandplotDto>(landplot));
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<LandplotDto>> Post(int regionId, CreateLandplotDto landplotDto)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var landplot = _mapper.Map<Landplot>(landplotDto);
 
@@ -68,14 +73,15 @@ namespace webAPI.Controllers
             return Created($"/api/regions/{regionId}/landplots/{landplot.Id}", _mapper.Map<LandplotDto>(landplot));
         }
 
-        [HttpPut("{landplotId}")]
+        [HttpPatch("{landplotId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult<LandplotDto>> Put(int regionId, int landplotId, UpdateLandplotDto landplotDto)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var oldLandplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (oldLandplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+            if (oldLandplot == null) return NotFound();
 
             _mapper.Map(landplotDto, oldLandplot);
 
@@ -85,13 +91,14 @@ namespace webAPI.Controllers
         }
         
         [HttpDelete("{landplotId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult> Delete(int regionId, int landplotId)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (landplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+            if (landplot == null) return NotFound();
 
             await _landplotsRepository.Delete(landplot);
 

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using webAPI.Data.Dtos.Buildings;
@@ -42,6 +44,7 @@ namespace webAPI.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IEnumerable<BuildingDto>> GetAll(int regionId, int landplotId)
         {
             var buildings = await _buildingsRepository.GetAll(regionId, landplotId);
@@ -50,22 +53,24 @@ namespace webAPI.Controllers
 
 
         [HttpGet("{buildingId}")]
+        [AllowAnonymous]
         public async Task<ActionResult<BuildingDto>> Get(int regionId, int landplotId, int buildingId)
         {
             var building = await _buildingsRepository.Get(regionId, landplotId, buildingId);
-            if (building == null) return NotFound($"Couldn't find a building with id of '{buildingId}'");
+            if (building == null) return NotFound();
 
             return Ok(_mapper.Map<BuildingDto>(building));
         }
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Manager, Administrator")]
         public async Task<ActionResult<BuildingDto>> Post(int regionId, int landplotId, CreateBuildingDto buildingDto)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (region == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+            if (region == null) return NotFound();
 
             var building = _mapper.Map<Building>(buildingDto);
 
@@ -78,17 +83,18 @@ namespace webAPI.Controllers
             return Created($"/api/regions/{regionId}/landplots/{landplotId}/buildings/{building.Id}", _mapper.Map<BuildingDto>(building));
         }
 
-        [HttpPut("{buildingId}")]
+        [HttpPatch("{buildingId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Manager, Administrator")]
         public async Task<ActionResult<BuildingDto>> Put(int regionId, int landplotId, int buildingId, UpdateBuildingDto buildingDto)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (landplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+            if (landplot == null) return NotFound();
 
             var oldBuilding = await _buildingsRepository.Get(regionId, landplotId, buildingId);
-            if (oldBuilding == null) return NotFound($"Couldn't find a building with id of '{buildingId}'");
+            if (oldBuilding == null) return NotFound();
 
             _mapper.Map(buildingDto, oldBuilding);
 
@@ -98,17 +104,18 @@ namespace webAPI.Controllers
         }
 
         [HttpDelete("{buildingId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<ActionResult> Delete(int regionId, int landplotId, int buildingId)
         {
             var region = await _regionsRepository.Get(regionId);
-            if (region == null) return NotFound($"Couldn't find a region with id of '{regionId}'");
+            if (region == null) return NotFound();
 
             var landplot = await _landplotsRepository.Get(regionId, landplotId);
-            if (landplot == null) return NotFound($"Couldn't find a landplot with id of '{landplotId}'");
+            if (landplot == null) return NotFound();
 
 
             var building = await _buildingsRepository.Get(regionId, landplotId, buildingId);
-            if (building == null) return NotFound($"Couldn't find a building with id of '{buildingId}'");
+            if (building == null) return NotFound();
             await _buildingsRepository.Delete(building);
 
             //204

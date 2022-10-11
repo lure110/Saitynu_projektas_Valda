@@ -10,12 +10,11 @@ namespace webAPI.Data
     {
         public DbSet<Region> Regions { get; set; }
         public DbSet<Landplot> Landplots { get; set; }
-
         public DbSet<Building> Buildings { get; set; }
-
+        public DbSet<User> Users { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+            
             optionsBuilder.UseSqlServer("Server=host.docker.internal,1433; Initial Catalog=valda-database;User ID=SA;Password=Password123!;");// Docker
             
         }
