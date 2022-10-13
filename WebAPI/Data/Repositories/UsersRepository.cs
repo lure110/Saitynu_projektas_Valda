@@ -5,7 +5,12 @@ namespace webAPI.Data.Repositories
 {
     public interface IUsersRepository
     {
+        Task<User> Create(User user);
+        Task Delete(User user);
+        Task<User> Get(int id);
         Task<User> Get(string email, string password);
+        Task<IEnumerable<User>> GetAll();
+        Task<User> Put(User user);
     }
 
     public class UsersRepository : IUsersRepository
@@ -24,13 +29,44 @@ namespace webAPI.Data.Repositories
             _restContext = restContext;
         }
 
+        public async Task<IEnumerable<User>> GetAll()
+        {
+            return await _restContext.Users.ToListAsync();
+        }
+
         public async Task<User> Get(string email, string password)
         {
-            return Users.FirstOrDefault(o => o.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && o.Password.Equals(password));
+            return await _restContext.Users.FirstOrDefaultAsync(o => o.Email.Equals(email) && o.Password.Equals(password));
 
             var user = await _restContext.Users.FirstOrDefaultAsync(o => o.Email == email && o.Password == password);
             if (user == null) return null;
             return user;
+        }
+        public async Task<User> Get(int id)
+        {
+            var user = await _restContext.Users.FirstOrDefaultAsync(o => o.Id == id);
+            if (user == null) return null;
+            return user;
+        }
+        public async Task<User> Create(User user)
+        {
+            _restContext.Users.Add(user);
+            await _restContext.SaveChangesAsync();
+            return user;
+        }
+        public async Task<User> Put(User user)
+        {
+            _restContext.Users.Update(user);
+
+            await _restContext.SaveChangesAsync();
+
+            return user;
+        }
+        public async Task Delete(User user)
+        {
+            _restContext.Users.Remove(user);
+
+            await _restContext.SaveChangesAsync();
         }
     }
 }

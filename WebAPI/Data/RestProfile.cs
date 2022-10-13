@@ -24,7 +24,8 @@ namespace webAPI.Data
             CreateMap<UpdateBuildingDto, Building>();
 
             CreateMap<User, UserDto>();
-
+            CreateMap<CreateUserDto, User>();
+            CreateMap<UpdateUserDto, User>();
         }
     }
 }
