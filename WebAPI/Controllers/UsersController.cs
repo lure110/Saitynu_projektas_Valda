@@ -46,6 +46,7 @@ namespace webAPI.Controllers
         public async Task<ActionResult<UserDto>> Post(CreateUserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
+            if (userDto.Role == null) user.Role = "Manager";
             user.Password = _passwordHasher.Hash(user.Password);
             await _usersRepository.Create(user);
             // 201 sukurta
@@ -59,9 +60,8 @@ namespace webAPI.Controllers
             var user = await _usersRepository.Get(id);
             if (user == null) return NotFound();
 
-            //region.Description = regionDto.Description;
             _mapper.Map(userDto, user);
-
+            user.Password = _passwordHasher.Hash(user.Password);
 
             await _usersRepository.Put(user);
             return Ok(_mapper.Map<UserDto>(user));

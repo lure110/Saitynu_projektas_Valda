@@ -18,13 +18,6 @@ namespace webAPI.Data.Repositories
     {
         private readonly RestContext _restContext;
 
-        public static List<User> Users = new()
-        {
-            new () { Email = "test@test.com", Password =  "password", Name = "Arnas A", Role = "Administrator"},
-            new () { Email = "test1@test.com", Password =  "password", Name = "Arnas A", Role = "Manager"},
-        };
-
-
         public UsersRepository(RestContext restContext)
         {
             _restContext = restContext;

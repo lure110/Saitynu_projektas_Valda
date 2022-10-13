@@ -47,6 +47,13 @@ namespace webAPI.Controllers
             // need simple validation
             // check email, password 409 bad request
 
+            if(await _usersRepository.Get(user.Email) != null)
+            {
+                return Conflict(new ErrorResponse()
+                {
+                    ErrorMessage = "User already exists"
+                });
+            }
 
             string passwordHash = _passwordHasher.Hash(user.Password);
             User registrationUser = new User()
@@ -67,12 +74,19 @@ namespace webAPI.Controllers
         {
 
             var user = await _usersRepository.Get(userEntry.Email);
-            if (user == null) return Unauthorized();
-
-            if(!_passwordHasher.Verify(userEntry.Password, user.Password))
+            if (user == null) return NotFound();
+            try
             {
-                return Unauthorized();
+                if (!_passwordHasher.Verify(userEntry.Password, user.Password))
+                {
+                    return Unauthorized();
+                }
             }
+            catch(Exception)
+            {
+                return BadRequest();
+            }
+
 
             AuthenticatedUserResponse response = await _authenticator.Authenticate(user);
 

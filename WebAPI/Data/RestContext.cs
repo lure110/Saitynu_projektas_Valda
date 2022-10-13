@@ -15,8 +15,7 @@ namespace webAPI.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-           optionsBuilder.UseSqlServer("Server=host.docker.internal,1433; Initial Catalog=valda-database;User ID=SA;Password=Password123!;");// Docker
+            optionsBuilder.UseSqlServer("Server=host.docker.internal,1433; Initial Catalog=valda-database;User ID=SA;Password=Password123!;");// Docker
             
         }
     }
