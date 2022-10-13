@@ -1,21 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using webAPI.Data;
 using webAPI.Data.Repositories;
 using System.Text;
 using webAPI.Helpers;
-using Microsoft.AspNetCore.Identity;
-using webAPI.Data.Entities;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using webAPI.Data.Dtos.Regions;
+using webAPI.Helpers.PasswordHashers;
+using webAPI.Helpers.TokenGenerators;
+using webAPI.Helpers.TokenGenerators.TokenValidators;
+using webAPI.Helpers.Authenticators;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 // Add services to the container.
 builder.Services.AddControllers();
@@ -28,9 +23,23 @@ builder.Services.AddTransient<IRegionsRepository, RegionsRepository>();
 builder.Services.AddTransient<ILandplotsRepository, LandplotsRepository>();
 builder.Services.AddTransient<IBuildingsRepository, BuildingsRepository>();
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IPasswordHasher, BcryptPasswordHasher>();
 
+AuthenticationConfiguration authenticationConfiguration = new AuthenticationConfiguration();
+
+builder.Configuration.Bind("Jwt", authenticationConfiguration);
+builder.Services.AddSingleton(authenticationConfiguration);
+
+
+builder.Services.AddSingleton<TokenGenerator>();
+builder.Services.AddSingleton<RefreshTokenGenerator>();
+builder.Services.AddSingleton<AccessTokenGenerator>();
+builder.Services.AddSingleton<RefreshTokenValidator>();
+
+builder.Services.AddTransient<Authenticator>();
 
 builder.Services.AddSwaggerGen( options =>
 {
@@ -67,6 +76,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
@@ -74,40 +84,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 });
 builder.Services.AddAuthorization();
 
-
-IResult Login(UserLogin user, IUserService service)
-{
-    if (!string.IsNullOrEmpty(user.Email) &&
-        !string.IsNullOrEmpty(user.Password))
-    {
-        var loggedInUser = service.GetUserByCredentials(user.Email, user.Password);
-        if (loggedInUser is null) return Results.NotFound();
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, loggedInUser.Email),
-            new Claim(ClaimTypes.Name, loggedInUser.Name),
-            new Claim(ClaimTypes.Role, loggedInUser.Role)
-        };
-
-        var token = new JwtSecurityToken
-        (
-            issuer: builder.Configuration["Jwt:Issuer"],
-            audience: builder.Configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
-            notBefore: DateTime.UtcNow,
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-                SecurityAlgorithms.HmacSha256)
-        );
-
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return Results.Ok(tokenString);
-    }
-    return Results.NotFound();
-}
 
 var app = builder.Build();
 
@@ -120,12 +96,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseAuthentication();
-
-app.MapPost("/auth",
-    (UserLogin user, IUserService service) => Login(user, service))
-    .Accepts<UserLogin>("application/json");
+app.UseAuthorization();
 
 
 app.MapControllers();

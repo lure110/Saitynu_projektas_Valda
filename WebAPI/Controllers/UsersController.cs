@@ -7,6 +7,7 @@ using System.Data;
 using webAPI.Data.Dtos.Users;
 using webAPI.Data.Entities;
 using webAPI.Data.Repositories;
+using webAPI.Helpers.PasswordHashers;
 
 namespace webAPI.Controllers
 {
@@ -16,10 +17,12 @@ namespace webAPI.Controllers
     {
         private readonly IUsersRepository _usersRepository;
         private readonly IMapper _mapper;
-        public UsersController(IUsersRepository usersRepository, IMapper mapper)
+        private readonly IPasswordHasher _passwordHasher;
+        public UsersController(IUsersRepository usersRepository, IPasswordHasher passwordHasher, IMapper mapper)
         {
             _usersRepository = usersRepository;
             _mapper = mapper;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpGet]
@@ -43,7 +46,7 @@ namespace webAPI.Controllers
         public async Task<ActionResult<UserDto>> Post(CreateUserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
-
+            user.Password = _passwordHasher.Hash(user.Password);
             await _usersRepository.Create(user);
             // 201 sukurta
             return Created($"/api/users/{user.Id}", _mapper.Map<UserDto>(user));

@@ -12,6 +12,7 @@ namespace webAPI.Data
         public DbSet<Landplot> Landplots { get; set; }
         public DbSet<Building> Buildings { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 

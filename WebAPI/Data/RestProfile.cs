@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using webAPI.Data.Dtos.Buildings;
 using webAPI.Data.Dtos.Landplots;
+using webAPI.Data.Dtos.RefreshTokens;
 using webAPI.Data.Dtos.Regions;
 using webAPI.Data.Dtos.Users;
 using webAPI.Data.Entities;
@@ -26,6 +27,8 @@ namespace webAPI.Data
             CreateMap<User, UserDto>();
             CreateMap<CreateUserDto, User>();
             CreateMap<UpdateUserDto, User>();
+
+            CreateMap<RefreshToken, RefreshTokenDto>();
         }
     }
 }

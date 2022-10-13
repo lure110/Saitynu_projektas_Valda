@@ -9,6 +9,7 @@ namespace webAPI.Data.Repositories
         Task Delete(User user);
         Task<User> Get(int id);
         Task<User> Get(string email, string password);
+        Task<User> Get(string email);
         Task<IEnumerable<User>> GetAll();
         Task<User> Put(User user);
     }
@@ -47,6 +48,10 @@ namespace webAPI.Data.Repositories
             var user = await _restContext.Users.FirstOrDefaultAsync(o => o.Id == id);
             if (user == null) return null;
             return user;
+        }
+        public async Task<User> Get(string email)
+        {
+            return await _restContext.Users.FirstOrDefaultAsync(o => o.Email.Equals(email));
         }
         public async Task<User> Create(User user)
         {
