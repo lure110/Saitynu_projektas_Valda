@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
+using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using webAPI.Data.Dtos.RefreshTokens;
@@ -11,10 +16,14 @@ using webAPI.Data.Entities;
 using webAPI.Data.Repositories;
 using webAPI.Data.Requests;
 using webAPI.Data.Responses;
+using webAPI.Helpers;
 using webAPI.Helpers.Authenticators;
 using webAPI.Helpers.PasswordHashers;
 using webAPI.Helpers.TokenGenerators;
 using webAPI.Helpers.TokenGenerators.TokenValidators;
+using CookieHeaderValue = System.Net.Http.Headers.CookieHeaderValue;
+using System.Web;
+
 
 namespace webAPI.Controllers
 {
@@ -28,9 +37,11 @@ namespace webAPI.Controllers
         private readonly Authenticator _authenticator;
         private readonly RefreshTokenValidator _refreshTokenValidator;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
+        private readonly AuthenticationConfiguration _authenticationConfiguration;
 
         public AuthenticationController(IPasswordHasher passwordHasher, IUsersRepository usersRepository, IMapper mapper, 
-             RefreshTokenValidator refreshTokenValidator, IRefreshTokensRepository refreshTokensRepository, Authenticator authenticator)
+             RefreshTokenValidator refreshTokenValidator, IRefreshTokensRepository refreshTokensRepository, 
+             Authenticator authenticator, IOptions<AuthenticationConfiguration> configuration)
         {
             _passwordHasher = passwordHasher;
             _usersRepository = usersRepository;
@@ -38,6 +49,7 @@ namespace webAPI.Controllers
             _refreshTokenValidator = refreshTokenValidator;
             _refreshTokensRepository = refreshTokensRepository;
             _authenticator = authenticator;
+            _authenticationConfiguration = configuration.Value;
         }
 
         [HttpPost("register")]
@@ -69,10 +81,10 @@ namespace webAPI.Controllers
             return Ok(registrationUser);
         }
 
+        [EnableCors]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLogin userEntry)
         {
-
             var user = await _usersRepository.Get(userEntry.Email);
             if (user == null) return NotFound();
             try
@@ -89,6 +101,19 @@ namespace webAPI.Controllers
 
 
             AuthenticatedUserResponse response = await _authenticator.Authenticate(user);
+            
+            CookieOptions opt = new CookieOptions();
+            opt.Expires = DateTimeOffset.Now.AddMinutes(_authenticationConfiguration.ExpirationTimeInMinutes);
+            opt.Domain = "localhost";
+            opt.Path = "/";
+
+            CookieOptions opt1 = new CookieOptions();
+            opt1.Expires = (DateTime.Now.AddMinutes(_authenticationConfiguration.RefreshExpirationTimeInMinutes));
+            opt1.Domain = "localhost";
+            opt1.Path = "/";
+
+            Response.Cookies.Append("access_token", response.AccessToken, opt);
+            Response.Cookies.Append("refresh_token", response.RefreshToken, opt1);
 
             return Ok(response);
         }
