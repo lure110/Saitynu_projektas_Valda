@@ -21,7 +21,7 @@ const logoName = "VALDA";
 export default function Header() {
     const pages = ['Dashboard'];
     const adminPages = ['Users'];
-    const settings = ['Profile'];
+    const settings = [];
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
