@@ -8,10 +8,12 @@ import Main from './pages/Main';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoutes, { useVerify } from './components/Authentication';
-import Dashboard from './pages/DashBoard';
+import Dashboard from './pages/Dashboard';
 import Logout from './pages/Logout';
 import Users from './pages/Users';
 import Profile from './pages/Profile';
+import Landplots from './pages/Landplot';
+import Buildings from './pages/Buildings';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -25,6 +27,8 @@ root.render(
             <Route path="/Logout" element={<Logout />}/>
             <Route path="/Profile" element={<Profile />}/>
             <Route path="/Users" element={<Users />}/>
+            <Route path="/Landplots" element={<Landplots />}/>
+            <Route path="/Buildings" element={<Buildings />}/>
           </Route>
           <Route path="/" element={<Main />} />
 

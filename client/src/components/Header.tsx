@@ -15,20 +15,16 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { NavLink } from 'react-router-dom';
 import { LoginButton, useVerify } from './Authentication';
 import { CircularProgress } from '@mui/material';
-import { useEffect } from 'react';
 
-const pages = ['Dashboard'];
-const adminPages = ['Users'];
-const settings = ['Profile', ];
 const logoName = "VALDA";
 
 export default function Header() {
+    const pages = ['Dashboard'];
+    const adminPages = ['Users'];
+    const settings = ['Profile'];
+
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    let isAdmin = false;
-    if(localStorage.getItem("role") === "Administrator"){
-        isAdmin = true;
-    }
     const {isAuth, error, loaded} = useVerify();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -47,14 +43,11 @@ export default function Header() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     }
-
-    useEffect(() => {
-        if(isAdmin) {
-            settings.push(...adminPages);
-        }
-        settings.push('Logout');
-    }, []);
-
+    
+    if(localStorage.getItem("role") === "Administrator") {
+        settings.push(...adminPages);
+    }
+    settings.push('Logout');
 
     let profileProp = <LoginButton />;
     
@@ -63,7 +56,7 @@ export default function Header() {
         <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Avatar" src="/static/images/avatar/2.jpg" />
+                    <Avatar alt={`${localStorage.getItem('name')}`} src="/static/images/avatar/2.jpg" />
                 </IconButton>
             </Tooltip>
             <Menu
@@ -82,14 +75,17 @@ export default function Header() {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
             >
-                {settings.map((setting) => (
-                    <NavLink to={`/${setting}`}>
-                    <MenuItem 
-                        key={setting} onClick={handleCloseUserMenu}
-                    >
-                        <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem></NavLink>
-                ))}
+                {
+                    settings.map((setting) => {
+                        return (
+                            <NavLink to={`/${setting}`}>
+                            <MenuItem 
+                                key={setting} onClick={handleCloseUserMenu}
+                            >
+                                <Typography textAlign="center">{setting}</Typography>
+                            </MenuItem></NavLink>
+                        );
+                    })}
             </Menu>
         </Box> </>;
     }
@@ -155,12 +151,13 @@ export default function Header() {
                                 }}
                             >
                                 {pages.map((page) => (
+                                    <NavLink to={`/${page}`}>
                                     <MenuItem 
                                         key={page} 
                                         onClick={handleCloseNavMenu} 
                                     >
-                                        <Typography textAlign="center"><NavLink to={`/${page}`}>{page}</NavLink></Typography>
-                                    </MenuItem>
+                                        <Typography textAlign="center">{page}</Typography>
+                                    </MenuItem></NavLink>
                                 ))}
                             </Menu>
                         </Box>
@@ -184,13 +181,14 @@ export default function Header() {
                         {/* DESKTOP */}
                         <Box sx={{flexGrow: 1, display: { xs: 'none', md: 'flex'}}}>
                             {pages.map((page) => (
+                                <NavLink to={`/${page}`} >
                                 <Button
                                     key={page}
                                     onClick={handleCloseNavMenu}
                                     sx={{ my: 2, color: 'white', display: 'block'}}
                                 >
-                                    <NavLink to={`/${page}`} >{page}</NavLink>
-                                </Button>
+                                    {page}
+                                </Button></NavLink>
                             ))}
                         </Box>
                         {/* USER PROFILE UI*/} 

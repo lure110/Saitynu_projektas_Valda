@@ -6,6 +6,7 @@ using AutoMapper;
 using webAPI.Data.Dtos.Regions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors;
 
 namespace webAPI.Controllers
 {
@@ -23,6 +24,7 @@ namespace webAPI.Controllers
 	        "description" : "desc"
         }
     */
+    [EnableCors]
     [Route("api/regions")]
     [ApiController]
     public class RegionsController : ControllerBase

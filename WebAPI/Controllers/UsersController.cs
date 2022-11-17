@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -24,14 +25,12 @@ namespace webAPI.Controllers
             _mapper = mapper;
             _passwordHasher = passwordHasher;
         }
-
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
         public async Task<IEnumerable<UserDto>> GetAll()
         {
             return (await _usersRepository.GetAll()).Select(o => _mapper.Map<UserDto>(o));
         }
-
         [HttpGet("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Manager, Administrator")]
         public async Task<ActionResult<User>> Get(int id)

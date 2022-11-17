@@ -1,4 +1,4 @@
-import { AppBar, Box, colors, createStyles, makeStyles, Theme, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, colors, createStyles, makeStyles, Stack, Theme, Toolbar, Typography } from '@mui/material';
 import { Container } from '@mui/system';
 import AdbIcon from '@mui/icons-material/Adb';
 import * as React from 'react';
@@ -18,10 +18,12 @@ export default function Footer() {
                 right: '0',
                 margin: '0 auto'
             }}
-            >
-                <Toolbar disableGutters>
-                    Footer
-                </Toolbar>
+            >        
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1} mt={1}>
+                    <Typography variant="h5" color="whitesmoke">
+                        Created by Arnas Abromavičius IFF-9/2
+                    </Typography>
+                </Stack>
             </Container>
     );
 }

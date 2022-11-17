@@ -53,7 +53,6 @@ namespace webAPI.Controllers
         }
 
         [HttpPost("register")]
-
         public async Task<IActionResult> Register([FromBody] CreateUserDto user)
         {
             // need simple validation
@@ -81,7 +80,7 @@ namespace webAPI.Controllers
             return Ok(registrationUser);
         }
 
-        [EnableCors]
+        
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLogin userEntry)
         {
@@ -143,7 +142,6 @@ namespace webAPI.Controllers
 
         }
 
-        
         [HttpDelete("logout")]
         [Authorize]
         public async Task<IActionResult> Logout()

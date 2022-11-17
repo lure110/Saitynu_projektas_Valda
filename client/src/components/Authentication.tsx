@@ -11,7 +11,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import jwt_decode from "jwt-decode";
 
-const API_URL = "https://localhost:7194/auth";
+const API_URL = "auth";
 
 export const useVerify = () => {
     const [isAuth, setIsAuth] = useState(false);
@@ -21,23 +21,12 @@ export const useVerify = () => {
     useEffect(() => {
         (async () => {
             try {
-                //await new Promise(request => setTimeout(request, 1000))
+                await new Promise(request => setTimeout(request, 1500));
                 if(Cookies.get("access_token") != null){
                     setIsAuth(true);
                 } else {
                     setIsAuth(false);
                 }
-                /*
-                const config = {
-                    withCredentials:true,
-                    headers:{
-                        access_token: "Bearer " + Cookies.get('access_token')
-                    }
-                };
-                const response = await (await axios.get(`${API_URL}/verify`, config));
-                if (response.status === 200)
-                    setIsAuth(true);
-            */
             } catch (error) {
                 setError("Error occured during authentication process");
             } finally {
@@ -97,13 +86,11 @@ export const LoginButton = () => {
         (async () => {
             setLoaded(false);
             try {
-                console.log(data.get('remember'));
                 const json = JSON.stringify(
                     {
                         email: data.get('email'),
                         password: data.get('password')
                     });
-                console.log(json);
                 const response = await (await axios.post(`${API_URL}/login`, json, {
                     headers: {
                         'Content-Type':'application/json'
@@ -198,10 +185,6 @@ export const LoginButton = () => {
                             type="password"
                             autoComplete="current-password"
                         />
-                        <FormControlLabel 
-                            control={<Checkbox value="remember" color="primary" id="remember" name="remember" />}
-                            label="Remember me"
-                        />
                         <Button
                             type="submit"
                             fullWidth
@@ -210,13 +193,6 @@ export const LoginButton = () => {
                         >
                             Log in
                         </Button>
-                        {/*}
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        {*/}
                     </Box>
                 </DialogContent>
         </>;
@@ -256,7 +232,6 @@ export const LoginButton = () => {
                 TransitionComponent={Transition}
                 keepMounted
                 onClose={handleClose}
-                aria-describeby="login-modal"
             >
                 {renderDialog}
             </Dialog>

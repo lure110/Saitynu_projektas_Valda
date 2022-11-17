@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using webAPI.Data.Dtos.Landplots;
@@ -9,6 +10,7 @@ using webAPI.Data.Repositories;
 
 namespace webAPI.Controllers
 {
+    [EnableCors]
     [Route("api/regions/{regionId}/landplots")]
     [ApiController]
     public class LandplotsController : ControllerBase
