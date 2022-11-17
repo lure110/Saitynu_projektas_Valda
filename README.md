@@ -59,6 +59,7 @@ Valdytojas, kurio paskyrą sukuria administratorius, naudodamasis platforma tikr
 |![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/component_more.png)|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/component_more_pic.png)|
 |![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/description.png)|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/description_pic.png)|
 |![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/edit_region.png)|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/edit_region_pic.png)|
+|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/create_user.png)|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/create_user_pic.png)|
 ## API specifkacija
 
 ### Regionai
