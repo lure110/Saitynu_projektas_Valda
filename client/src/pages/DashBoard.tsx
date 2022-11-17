@@ -336,7 +336,7 @@ export default function Dashboard() {
                         component="form"
                         onSubmit={handleSubmitEdit}
                         sx={{mt: 1}}
-                        minWidth={400}
+                        minWidth="100%"
                     >
                         <TextField 
                             margin="normal"
