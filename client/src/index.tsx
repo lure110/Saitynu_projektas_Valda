@@ -33,7 +33,7 @@ root.render(
           <Route path="/" element={<Main />} />
 
       </Routes>
-      <Footer />
+      {/*}<Footer />{*/}
   </Router>
 );
 
