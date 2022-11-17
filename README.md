@@ -51,7 +51,9 @@ Valdytojas, kurio paskyrą sukuria administratorius, naudodamasis platforma tikr
 
 ## Naudotojo sąsajos projektas:
 
-
+| Wireframe | Realizacija|
+|-----------|------------|
+|![Header wireframe](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/Header_component.png)|![enter image description here](https://github.com/lure110/Saitynu_projektas_Valda/blob/main/pictures/Header_component_pic.png)|
 
 ## API specifkacija
 
